@@ -1,0 +1,12 @@
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.csproj.CoreCompileInputs.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.AssemblyInfoInputs.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.AssemblyInfo.cs
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Debug\netcoreapp3.1\BackEnd.Services.deps.json
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Debug\netcoreapp3.1\BackEnd.Services.runtimeconfig.json
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Debug\netcoreapp3.1\BackEnd.Services.runtimeconfig.dev.json
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Debug\netcoreapp3.1\BackEnd.Services.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Debug\netcoreapp3.1\BackEnd.Services.pdb
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.pdb
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.genruntimeconfig.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Debug\netcoreapp3.1\BackEnd.Services.csprojAssemblyReference.cache

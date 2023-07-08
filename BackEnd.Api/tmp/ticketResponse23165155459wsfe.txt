@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<loginTicketResponse version="1.0">
+    <header>
+        <source>CN=wsaahomo, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239</source>
+        <destination>SERIALNUMBER=CUIT 23165155459, CN=soltec2020</destination>
+        <uniqueId>3511932460</uniqueId>
+        <generationTime>2022-11-26T09:46:36.717-03:00</generationTime>
+        <expirationTime>2022-11-26T21:46:36.717-03:00</expirationTime>
+    </header>
+    <credentials>
+        <token>PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI/Pgo8c3NvIHZlcnNpb249IjIuMCI+CiAgICA8aWQgc3JjPSJDTj13c2FhaG9tbywgTz1BRklQLCBDPUFSLCBTRVJJQUxOVU1CRVI9Q1VJVCAzMzY5MzQ1MDIzOSIgZHN0PSJDTj13c2ZlLCBPPUFGSVAsIEM9QVIiIHVuaXF1ZV9pZD0iNTU4Njc5NjEiIGdlbl90aW1lPSIxNjY5NDY2NzM2IiBleHBfdGltZT0iMTY2OTUwOTk5NiIvPgogICAgPG9wZXJhdGlvbiB0eXBlPSJsb2dpbiIgdmFsdWU9ImdyYW50ZWQiPgogICAgICAgIDxsb2dpbiBlbnRpdHk9IjMzNjkzNDUwMjM5IiBzZXJ2aWNlPSJ3c2ZlIiB1aWQ9IlNFUklBTE5VTUJFUj1DVUlUIDIzMTY1MTU1NDU5LCBDTj1zb2x0ZWMyMDIwIiBhdXRobWV0aG9kPSJjbXMiIHJlZ21ldGhvZD0iMjIiPgogICAgICAgICAgICA8cmVsYXRpb25zPgogICAgICAgICAgICAgICAgPHJlbGF0aW9uIGtleT0iMjMxNjUxNTU0NTkiIHJlbHR5cGU9IjQiLz4KICAgICAgICAgICAgPC9yZWxhdGlvbnM+CiAgICAgICAgPC9sb2dpbj4KICAgIDwvb3BlcmF0aW9uPgo8L3Nzbz4K</token>
+        <sign>GzdL6DoV6xC4War3F4SYOpzkOczRpz+opCRLNE06bhXRP0SeeKr1J6h6dM9dok4PxbEoxIY63F2LhwTm3AzDD3w8qtdNBXxnEibRLakeHaZRbrP3ePyMkxKpNqkHurQhpfyBA4BfPJtqTH6ep6MFsAJqBOsaN6KFRaJEYqqUrX4=</sign>
+    </credentials>
+</loginTicketResponse>
+
