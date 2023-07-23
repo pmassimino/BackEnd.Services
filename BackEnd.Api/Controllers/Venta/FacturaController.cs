@@ -266,6 +266,69 @@ namespace BackEnd.Api.Controllers.Ventas
                 return BadRequest(error);
             }
         }
+        [HttpGet("{id}/recuperar")]
+        public IActionResult Recuperar(Guid id)
+        {
+            Dictionary<string, string> errorValidacion = new Dictionary<string, string>();
+            var tmpFactura = this._service.GetOne(id);
+            if (tmpFactura == null) 
+            {
+                errorValidacion.Add("Factura", "Factura no existe");
+            }
+            if (tmpFactura.Cae != 0) 
+            {
+                errorValidacion.Add("Factura1", "Factura con cae no se puede recuperar");
+            }
+            if (errorValidacion.Count > 0) 
+            {
+                return BadRequest(errorValidacion);
+            }
+            //configurar
+            var tmpEmpresa = empresaService.GetOne(sessionService.IdEmpresa);
+
+            var ws = new FacturaWebService_V1();
+            ws.UrlServicio = "https://servicios1.afip.gov.ar/wsfev1/service.asmx";
+            ws.UrlLogin = "https://wsaa.afip.gov.ar/ws/services/LoginCms";
+            //ws.DNDestino = "CN=ws, O=AFIP, C=AR, SERIALNUMBER=CUIT 33693450239";
+            var path = _hostingEnvironment.ContentRootPath + @"\tmp\";
+            ws.PathTicket = path;
+            var empresa = new EmpresaInfo();
+            empresa.Cuit = tmpEmpresa.NumeroDocumento;
+            empresa.NombreEmpresa = tmpEmpresa.Nombre;
+            empresa.PathCertificado = "C:/clientes/lorenaheredia/Certificado/Heredia2023.pfx";
+            ws.DNDestino = "cn=wsaa,o=afip,c=ar,serialNumber=CUIT 33693450239";
+
+            ws.Empresa = empresa;
+
+            
+            var factura = new FacturaWebService_V1.Factura();
+            //Numero y tipo
+            factura.Punto_Emision = tmpFactura.Pe;
+            int tipo = this.afipHelperService.GetIdComprobanteAfip(tmpFactura.Letra, tmpFactura.Tipo);
+            var loginResult = ws.Login();
+            int numero = Convert.ToInt16(tmpFactura.Numero);
+            factura.Numero = numero;
+            factura.id_Concepto = 3;
+            factura.Tipo_Cbte = tipo;
+            
+            var result = ws.GetComprobante(tipo,tmpFactura.Pe,numero);
+            Dictionary<string, string> error = new Dictionary<string, string>();
+            decimal importeTotal = Convert.ToDecimal(factura?.Importe_Total ?? 0);
+            long numeroDocumento = tmpFactura.Sujeto?.NumeroDocumento ?? 0;
+
+            if (result.Result && (importeTotal != tmpFactura.Total || numeroDocumento != tmpFactura.Sujeto.NumeroDocumento))
+            {
+                error.Add("Afip", "La Factura registrada en AFIP no coincide con la registrada en el sistema");
+            }
+            else 
+            {
+                error.Add("General", result.Message);
+            }
+            //Actualizar CAE  y estado
+            long cae = Convert.ToInt64(result.Factura.cae);
+            this.service.UpdateAfip(tmpFactura.Id, cae, result.Factura.Punto_Emision, result.Factura.Numero);
+            return Ok(result);
+}
 
 
     }

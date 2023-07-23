@@ -72,6 +72,11 @@ namespace BackEnd.Api.Controllers.Contable
             {
                 return BadRequest("IdCuentaMayor Requerido");
             }
+            if (fecha > fechaHasta) 
+            {
+                return BadRequest("Rango de fecha no válido");
+
+            }
             var result = _service.GetAll()
             .SelectMany(m => m.Detalle)
             .Select(m => new MayorView

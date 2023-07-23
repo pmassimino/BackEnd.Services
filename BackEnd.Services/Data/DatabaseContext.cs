@@ -90,11 +90,15 @@ namespace BackEnd.Services.Data
             //Detalle Factura Composite Key
             modelBuilder.Entity<DetalleTributos>()
                 .HasKey(e => new { e.Id, e.Item });
+            //Detalle Factura Composite Key
+            modelBuilder.Entity<ComprobanteAsociado>()
+                .HasKey(e => new { e.Id, e.Item });
             //Factura Delete cascade
             modelBuilder.Entity<Factura>().HasMany<DetalleFactura>(m => m.Detalle).WithOne(f => f.Factura).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Factura>().HasMany<MedioPago>(m => m.MedioPago).WithOne(f => f.Factura).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Factura>().HasMany<DetalleIva>(m => m.Iva).WithOne(f => f.Factura).OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Factura>().HasMany<DetalleTributos>(m => m.Tributos).WithOne(f => f.Factura).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Factura>().HasMany<ComprobanteAsociado>(m => m.ComprobanteAsociado).WithOne(f => f.Factura).OnDelete(DeleteBehavior.Cascade);
             //ConfigFactura  Composite Key
             modelBuilder.Entity<ItemNumerador>()
                 .HasKey(e => new { e.Id, e.IdComprobante });

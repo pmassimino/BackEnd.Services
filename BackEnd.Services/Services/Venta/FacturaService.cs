@@ -32,6 +32,8 @@ namespace BackEnd.Services.Services.Venta
         private ICuentaMayorService cuentaMayorService;
         private IMovCtaCteService movCtaCteService;
         private IMayorService mayorService;
+        private RepositoryBase<Mayor, Guid> mayorRepository;
+        
         private IModeloAsientoFacturaService modeloAsientoFactura;
         private IGlobalService globalService;
         private ILibroIvaService libroIvaService;
@@ -61,8 +63,11 @@ namespace BackEnd.Services.Services.Venta
             this.transaccionService.UnitOfWork = UnitOfWork;
             this.libroIvaService.autoSave = false;
             this.libroIvaService.UnitOfWork = UnitOfWork;
+            
             this.mayorService.autoSave = false;
             this.mayorService.UnitOfWork = UnitOfWork;
+            this.mayorRepository = new RepositoryBase<Mayor, Guid>(UnitOfWork);
+
             this.movCtaCteService.autoSave = false;
             this.movCtaCteService.UnitOfWork = UnitOfWork;
             this.numeradorDocumentoService = numeradorDocumentoService;
@@ -108,6 +113,7 @@ namespace BackEnd.Services.Services.Venta
             tra.Tipo = "VENTAS.FACTURA";
             this.transaccionService.Add(tra);
             Entity.IdTransaccion = tra.Id;
+            Entity.Origen = tra.Tipo;
             //Numerador
             var tmpNumerador = this.NextNumber(Entity.IdSeccion, Entity.Letra, Entity.Tipo);
             Entity.Pe = tmpNumerador.PuntoEmision;
@@ -235,7 +241,7 @@ namespace BackEnd.Services.Services.Venta
             //Forma de pago
             //Cuenta Cte
             foreach (var item in Entity.MedioPago)
-            {
+            {                
                 var cta = cuentaMayorService.GetOne(item.IdCuentaMayor);
                 if (cta.IdUso == "3")//Cta.Cte.
                 {
@@ -252,34 +258,32 @@ namespace BackEnd.Services.Services.Venta
                             this.movCtaCteService.Delete(tmpitem.Id);
                         }
                     }
-                    this.movCtaCteService.Add(newMov);
+                    this.movCtaCteService.Add(newMov);                    
                 }
             }
             //Contabilidad
             var newMayor = this.Contabilice(Entity);
-            //borra mov si existe
-            var tmpmayor = this.mayorService.GetByTransaction(Entity.IdTransaccion);
+            //borra mov si existe            
+            var tmpmayor = this.mayorRepository.GetAll().Where(w=>w.IdTransaccion==Entity.IdTransaccion);
             if (tmpmayor != null)
             {
 
                 foreach (var tmpitem in tmpmayor)
-                {
-                    this.mayorService.Delete(tmpitem.Id);                   
+                {                    
+                    this.mayorRepository.Delete(tmpitem.Id);
                 }
             }
-            //insertar mayor
-            this.mayorService.Add(newMayor);
+            //insertar mayor           
+            this.mayorRepository.Add(newMayor);
             //libro de iva
             //borra mov si existe
-            var tmpLibroIva = this.libroIvaService.GetByTransaction(Entity.IdTransaccion);
+            var tmpLibroIva = this.libroIvaService.GetByTransaction(Entity.IdTransaccion);            
             if (tmpLibroIva != null)
             {               
                 this.libroIvaService.Delete(tmpLibroIva.Id);               
             }
             var libroIva = libroIvaService.NewFrom(Entity);
-            this.libroIvaService.Add(libroIva);
-
-            
+            this.libroIvaService.Add(libroIva);            
            
             return 0;
         }
@@ -560,6 +564,7 @@ namespace BackEnd.Services.Services.Venta
             result.IdSucursal = entity.IdSucursal;
             result.IdTransaccion = entity.IdTransaccion;
             result.Pe = entity.Pe;
+            result.Origen = "VENTAS.FACTURA";
             result.Numero = entity.Numero;
             string concepto = "FACTURA";
             if (entity.Tipo.Trim() == "2")

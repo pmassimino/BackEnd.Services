@@ -1,7 +1,9 @@
 ﻿using BackEnd.Services.Core;
 using BackEnd.Services.Data;
+using BackEnd.Services.Models.Comun;
 using BackEnd.Services.Models.Contable;
 using BackEnd.Services.Models.Ventas;
+using BackEnd.Services.Services.Comun;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using System;
@@ -21,10 +23,15 @@ namespace BackEnd.Services.Services.Contable
     public class MayorService : ServiceBase<Mayor, Guid>, IMayorService
     {
         public ICuentaMayorService cuentaMayorService;
+        public ITransaccionService traService;
 
-        public MayorService(UnitOfWorkGestionDb UnitOfWork, ICuentaMayorService serv1):base(UnitOfWork)
+        public MayorService(UnitOfWorkGestionDb UnitOfWork, ICuentaMayorService serv1,ITransaccionService traService):base(UnitOfWork)
         {
             cuentaMayorService = serv1;
+            //Configurar para Transaccion
+            this.traService = traService;
+            this.traService.autoSave = false;
+            this.traService.UnitOfWork = UnitOfWork;
         }
         public override ValidationResults Validate(Mayor Entity)
         {
@@ -38,17 +45,32 @@ namespace BackEnd.Services.Services.Contable
             //Importes mayores a cero
             //Controlar balance
             var result = base.ValidateUpdate(Entity);
+            if (Entity.Detalle == null)
+            {
+                result.AddResult(new ValidationResult("El asiento no tiene detalle", this, "Detalle", "Detalle", null));
+            }
             if (Entity.Detalle != null)
             {
-                var cant = Entity.Detalle.Where(p => p.Importe < 0).Count();
+                var cant = Entity.Detalle.Where(p => p.Importe <= 0).Count();
                 if (cant > 0)
                 {
                     result.AddResult(new ValidationResult("Importe Menor a Cero no Permitido", this, "Importe", "Importe", null));
                 }
-            }
-            //Controlar balance
-            if (Entity.Detalle != null)
-            {
+                cant = Entity.Detalle.Count();
+                if (cant <= 1)
+                {
+                    result.AddResult(new ValidationResult("Detalle debe incluir dos items como minimo", this, "Detalle", "Detalle", null));
+                }
+                //Controlar las cuentas
+                foreach (var item in Entity.Detalle) 
+                {
+                    var existeCuenta = cuentaMayorService.GetOne(item.IdCuentaMayor);
+                    if (existeCuenta == null) 
+                    {
+                        result.AddResult(new ValidationResult(item.IdCuentaMayor + "Cuenta no valida", this, "Detalle", "Detalle", null));
+                    }
+                }
+                //Controlar Balance
                 var debe = Entity.Detalle.Where(p => p.IdTipo.Trim() == "1").Sum(p => p.Importe);
                 var haber = Entity.Detalle.Where(p => p.IdTipo.Trim() == "2").Sum(p => p.Importe);
                 if (debe != haber)
@@ -56,7 +78,11 @@ namespace BackEnd.Services.Services.Contable
                     result.AddResult(new ValidationResult("Asiento no Balancea", this, "Importe", "Importe", null));
                 }
             }
-            
+            if (string.IsNullOrEmpty(Entity.Concepto)) 
+            {
+                result.AddResult(new ValidationResult("Ingrese un concepto valido", this, "Concepto", "Concepto", null));
+            }
+           
             return result;
         }
         public override Guid NextID()
@@ -85,6 +111,21 @@ namespace BackEnd.Services.Services.Contable
         public override IEnumerable<Mayor> GetAll()
         {            
             return _Repository.GetAll().Include(d => d.Detalle.OrderBy(o=>o.IdTipo)).ThenInclude(c => c.CuentaMayor).OrderByDescending(o=>o.Fecha).ThenByDescending(o=>o.Numero);
+        }
+        public override Mayor Add(Mayor Entity)
+        {
+            
+            Entity = this.AddDefaultValues(Entity);
+            //Generar Transaccion
+            Transaccion tra = new Transaccion();
+            tra.Tipo = "CONTABILIDAD.MAYOR";
+            this.traService.Add(tra);
+            Entity.IdTransaccion = tra.Id;            
+            this.FixRelation(Entity);
+            var entityResult = _Repository.Add(Entity);
+            //this.UpdateRelated(Entity);
+            this.UnitOfWork.Commit();
+            return entityResult;
         }
         public override Mayor Update(Guid id, Mayor entity)
         {            

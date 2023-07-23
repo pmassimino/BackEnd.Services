@@ -12,7 +12,7 @@ namespace BackEnd.Services.Models.Ventas
     public class Factura : IEntityModel<Guid>, IStructuralEntity, ITransaccionalEntity
     {
         //Estructura
-        [Key,Required]
+        [Key, Required]
         public Guid Id { get; set; }
         [MaxLength(10)]
         public string IdEmpresa { get; set; }
@@ -38,6 +38,8 @@ namespace BackEnd.Services.Models.Ventas
         public DateTime FechaVencimiento { get; set; }
         public string IdMoneda { get; set; }
         public decimal CotizacionMoneda { get; set; }
+        [MaxLength(50)]
+        public string Origen { get; set; }
         //Responsable
         [MaxLength(20), ForeignKey("Sujeto")]
         public string IdCuenta { get; set; }
@@ -63,7 +65,7 @@ namespace BackEnd.Services.Models.Ventas
         public virtual IList<DetalleIva> Iva { get; set; }
         public virtual IList<DetalleTributos> Tributos { get; set; }
         public virtual IList<MedioPago> MedioPago { get; set; }
-
+        public virtual IList<ComprobanteAsociado> ComprobanteAsociado { get; set; }
         public virtual Sujeto Sujeto { get; set; }
 
         public Factura()
@@ -73,15 +75,16 @@ namespace BackEnd.Services.Models.Ventas
             this.Iva = new List<DetalleIva>();
             this.Tributos = new List<DetalleTributos>();
             this.MedioPago = new List<MedioPago>();
+            this.ComprobanteAsociado = new List<ComprobanteAsociado>();
         }
 
     }
     public class DetalleFactura
     {
         //Estructura
-        [Key , Column(Order = 0)]
+        [Key, Column(Order = 0)]
         public Guid Id { get; set; }
-       
+
         [Key, Column(Order = 1)]
         public int Item { get; set; }
         //General
@@ -164,5 +167,15 @@ namespace BackEnd.Services.Models.Ventas
         public decimal Importe { get; set; }
         public DateTime FechaVenc { get; set; }
         public Factura Factura { get; set; }
+    }
+    public class ComprobanteAsociado
+   {
+        [Key, Column(Order = 0)]
+        public Guid Id { get; set; }
+
+        [Key, Column(Order = 1)]
+        public int Item { get; set; }
+        public Guid IdFactura { get; set; }
+        public Factura Factura { get; set; }        
     }
 }
