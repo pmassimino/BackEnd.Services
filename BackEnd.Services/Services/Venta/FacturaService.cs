@@ -29,6 +29,7 @@ namespace BackEnd.Services.Services.Venta
     public class FacturaService : ServiceBase<Factura,Guid>,IFacturaService
     {
         private IArticuloService articuloService;
+        private IFamiliaService familiaService;
         private ICuentaMayorService cuentaMayorService;
         private IMovCtaCteService movCtaCteService;
         private IMayorService mayorService;
@@ -44,13 +45,14 @@ namespace BackEnd.Services.Services.Venta
         private INumeradorDocumentoService numeradorDocumentoService;
         private ITransaccionService transaccionService { get; set; }
         public int DigitosDecimal { get; set; } = 2;
-        public FacturaService(UnitOfWorkGestionDb UnitOfWork,IArticuloService articuloService,
+        public FacturaService(UnitOfWorkGestionDb UnitOfWork,IArticuloService articuloService,IFamiliaService familiaService,
             ICuentaMayorService cuentaMayorService, IMovCtaCteService movCtaCteService, IMayorService mayorService, IModeloAsientoFacturaService modeloAsientoFactura,
             IGlobalService globalService, ITransaccionService transaccionService, IReciboCtaCteService reciboCtaCteService, ILibroIvaService libroIvaService, ISujetoService sujetoService
 , IConfigFacturaService configFacturaService,IAFIPHelperService afipHelperService,INumeradorDocumentoService numeradorDocumentoService) : base(UnitOfWork)
         {
             this.cuentaMayorService = cuentaMayorService;
             this.articuloService = articuloService;
+            this.familiaService = familiaService;
             this.movCtaCteService = movCtaCteService;
             this.mayorService = mayorService;
             this.modeloAsientoFactura = modeloAsientoFactura;
@@ -593,7 +595,41 @@ namespace BackEnd.Services.Services.Venta
             //Venta
             string ctaIngresoDefault = this.modeloAsientoFactura.GetOne(1).CtaIngresoDefault;
             string nombre = this.cuentaMayorService.GetOne(ctaIngresoDefault).Nombre;
-            result.AddDetalle(ctaIngresoDefault, nombre, tipVenta, entity.TotalNeto, entity.FechaVencimiento);            
+            //Agrupo  
+            var tmpTotalArticulo = (from d in entity.Detalle
+                            group new { Total = d.Gravado + d.NoGravado, d.IdArticulo} by d.IdArticulo into g
+                            select new TotalArticuloResult
+                            {
+                                IdArticulo = g.Key,
+                                IdCuentaMayor=ctaIngresoDefault,
+                                Total = g.Sum(x => x.Total)
+                            }).ToList(); 
+            foreach (var item in tmpTotalArticulo)
+            {
+                var tmpArticulo = articuloService.GetOne(item.IdArticulo);
+                var tmpFamilia = familiaService.GetOne(tmpArticulo.IdFamilia);
+                if (tmpFamilia != null) 
+                {
+                    if (tmpFamilia.CtaIngresoDefault != null) 
+                    {
+                        item.IdCuentaMayor = tmpFamilia.CtaIngresoDefault;
+                    }
+                }
+            }
+            //Agrupo por cuenta
+            var tmpTotalPorCuentas = from t in tmpTotalArticulo
+                                     group new { t.IdCuentaMayor, t.Total } by t.IdCuentaMayor into g
+                                     select new
+                                     {
+                                         IdCuentaMayor = g.Key,
+                                         Total = g.Sum(x => x.Total)
+                                     };
+            foreach (var item in tmpTotalPorCuentas) 
+            {
+                nombre = this.cuentaMayorService.GetOne(item.IdCuentaMayor).Nombre;
+                result.AddDetalle(item.IdCuentaMayor, nombre, tipVenta, item.Total, entity.FechaVencimiento);
+            }
+            
             //Iva 
             foreach (var itemIva in entity.Iva) 
             {if (itemIva.Importe > 0)
@@ -689,6 +725,12 @@ namespace BackEnd.Services.Services.Venta
             this.UnitOfWork.Commit();
             return entity;
         }
+    }
+    public class TotalArticuloResult
+    {
+        public string IdArticulo { get; set; }
+        public string IdCuentaMayor { get; set; }
+        public decimal Total { get; set; }
     }
 
 }

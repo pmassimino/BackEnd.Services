@@ -13,5 +13,9 @@ namespace BackEnd.Services.Models.Almacen
         [Required, MaxLength(60)]
         public string Nombre { get; set; }
         public string IdFamilia { get; set; }
+        [MaxLength(20)]
+        public string CtaIngresoDefault { get; set; }
+        [MaxLength(20)]
+        public string CtaEgresoDefault { get; set; }
     }
 }

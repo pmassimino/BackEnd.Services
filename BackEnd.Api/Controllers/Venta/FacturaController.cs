@@ -41,6 +41,62 @@ namespace BackEnd.Api.Controllers.Ventas
             this.sujetoService = sujetoService;
             this.NombreRecurso = "Venta.Factura";
         }
+        [HttpGet("listView")]
+        public  IActionResult ListView(DateTime? fecha, DateTime? fechaHasta)
+        {
+            DateTime pfecha = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime pfechaHasta = pfecha.AddMonths(1).AddDays(-1);
+            if (fecha.HasValue)
+            {
+                pfecha = (DateTime)fecha;
+            }
+            if (fechaHasta.HasValue)
+            {
+                pfechaHasta = (DateTime)fechaHasta;
+            }
+            if (pfecha > pfechaHasta) 
+            {
+                return BadRequest("Rango de fecha incorrecto");
+            }
+            try
+            {
+                var result = this.service.GetAll().Where(w=>w.Fecha >= fecha && w.Fecha <= fechaHasta).ToList();
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+        [HttpGet("ByCuenta/{id}")]
+        public IActionResult GetByIdCuenta(string id)
+        {
+           
+            if (string.IsNullOrEmpty(id))
+            {
+                return BadRequest("IdCuenta Requerido");
+            }
+            
+            try
+            {
+                var result = this.service.GetAll().Where(w => w.IdCuenta==id).ToList();
+                return Ok(result);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
         [HttpGet("{id}/print")]
         public IActionResult Print(Guid id)
         {
@@ -60,12 +116,24 @@ namespace BackEnd.Api.Controllers.Ventas
             PdfReader pdfReader = new PdfReader(pdfTemplate);
             MemoryStream stream = new MemoryStream();
             PdfStamper pdfStamper = new PdfStamper(pdfReader, stream);
-            AcroFields Form = pdfStamper.AcroFields;
+            AcroFields Form = pdfStamper.AcroFields;            
+            // add a image            
+            iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(path + @"\Reports\logo.jpg");
+            PushbuttonField ad = Form.GetNewPushbuttonFromField("logo");
+            if (ad != null)
+            {
+                ad.Layout = PushbuttonField.LAYOUT_ICON_ONLY;
+                ad.ProportionalIcon = true;
+                ad.Image = image;
+                Form.ReplacePushbuttonField("logo", ad.Field);
+            }
+            Form.SetField("nombreEmpresa", Empresa.Nombre);
             Form.SetField("domicilioEmpresa", Empresa.Domicilio + "-Tel.: " + Empresa.Telefono);
             var tmpCuenta = sujetoService.GetOne(entity.IdCuenta);
             //Form.SetField("domicilioEmpresa1", Empresa + "-" + Empresa.Localidad.Provincia);
-            Form.SetField("emailEmpresa", Empresa.Email);           
-            Form.SetField("condIvaEmpresa", "IVA RESPONSABLE INSCRIPTO");
+            Form.SetField("emailEmpresa", Empresa.Email);
+            string condIva = Empresa.IdCondicionIva == "05" ? "RESPONSABLE MONOTRIBUTISTA" : "RESPONSABLE INSCRIPTO";
+            Form.SetField("condIvaEmpresa", condIva);
             Form.SetField("cuitEmpresa", Empresa.NumeroDocumento.ToString());
             Form.SetField("numeroIBEmpresa", Empresa.NumeroIB == 0 ? "" : Empresa.NumeroIB.ToString());
             Form.SetField("fechaInicioAct","");
@@ -115,6 +183,40 @@ namespace BackEnd.Api.Controllers.Ventas
             Form.SetField("codBarra", "0");
             Form.SetField("codBarraNumero", "0");
             Form.SetField("remito", "0");
+            //QR
+            var year = entity.FechaComp.Year.ToString();
+            var month = entity.FechaComp.Month.ToString().PadLeft(2, '0');
+            var day = entity.FechaComp.Day.ToString().PadLeft(2,'0');
+            var fecha = year + "-" + month + "-" + day;
+            var cuit = Empresa.NumeroDocumento;
+            var ptoVa = entity.Pe;
+            var letra = entity.Letra;
+            var nroCmp = entity.Numero;
+            var tipoCmp = this.afipHelperService.GetIdComprobanteAfip(entity.Letra, entity.Tipo);
+            var importe = entity.Total.ToString().Replace(",", ".");
+            var moneda = entity.IdMoneda;
+            var ctz = entity.IdMoneda == "PES" ? "1" : entity.CotizacionMoneda.ToString();
+            var tipoDocRec = tmpCuenta.IdTipoDoc;
+            var nroDocRec = tmpCuenta.NumeroDocumento.ToString();
+            var tipoCodAut = 'E';
+            var codAut = entity.Cae;
+            var qrStr = "{'ver':1,'fecha':'" + fecha + "','cuit':" + cuit + ",'ptoVta':" + ptoVa + ",'tipoCmp':" + tipoCmp + ",'nroCmp':" + nroCmp + ",'importe':" + importe + ",'moneda':'" + moneda + "','ctz':" + ctz + ",'tipoDocRec':" + tipoDocRec + ",'nroDocRec':" + nroDocRec + ",'tipoCodAut':'" + "E" + "','codAut':" + codAut + "}";
+
+            qrStr = qrStr.Replace(@"'", @"""");
+
+            byte[] byt = System.Text.Encoding.UTF8.GetBytes(qrStr);
+            var qrBase64 = Convert.ToBase64String(byt);
+
+            // Dim qrBase64 = Convert.ToBase64String(qrStr)
+
+            var url = "https://www.afip.gob.ar/fe/qr/?p=" + qrBase64;
+            // Insertar qr
+            iTextSharp.text.pdf.BarcodeQRCode qrcode = new BarcodeQRCode(url, 50, 50, null);
+            iTextSharp.text.Image img = qrcode.GetImage();
+
+            img.SetAbsolutePosition(50, 85);
+            if (entity.Cae !=0)
+                pdfStamper.GetOverContent(1).AddImage(img);
 
 
             pdfStamper.FormFlattening = true;

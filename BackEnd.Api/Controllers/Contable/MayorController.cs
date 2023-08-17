@@ -113,6 +113,33 @@ namespace BackEnd.Api.Controllers.Contable
             return Ok(result);
 
         }
+        [HttpGet("diario")]
+        public IActionResult Diario(DateTime? fecha, DateTime? fechaHasta)
+        {
+
+            DateTime pfecha = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            DateTime pfechaHasta = pfecha.AddMonths(1).AddDays(-1);
+            if (fecha.HasValue)
+            {
+                pfecha = (DateTime)fecha;
+            }
+            if (fechaHasta.HasValue)
+            {
+                pfechaHasta = (DateTime)fechaHasta;
+            }            
+            if (fecha > fechaHasta)
+            {
+                return BadRequest("Rango de fecha no válido");
+
+            }
+            var result = _service.GetAll()
+            .OrderBy(o => o.Fecha)
+            .Where(w => w.Fecha >= fecha && w.Fecha <= fechaHasta)
+            .ToList();
+
+            return Ok(result);
+
+        }
         public class MayorView
         {
             public Guid Id { get; set; }
