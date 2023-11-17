@@ -10,6 +10,9 @@ using BackEnd.Services.Models.Contable;
 using BackEnd.Services.Models.Tesoreria;
 using Microsoft.Extensions.Logging;
 using BackEnd.Services.Data.EFLogging;
+using BackEnd.Services.Models.Afip;
+using BackEnd.Services.Models.Mail;
+using BackEnd.Services.Services.Comun;
 
 namespace BackEnd.Services.Data
 {
@@ -36,6 +39,9 @@ namespace BackEnd.Services.Data
         public DbSet<DetalleFactura> DetalleFactura { get; set; }
         public DbSet<ModeloAsientoFactura> ModeloAsientoFactura { get; set; }
         public DbSet<ConfigFactura> ConfigFactura { get; set; }
+        public DbSet<AfipWs> AfipWs { get; set; }
+        public DbSet<CertificadoDigital> CertificadoDigital { get; set; }
+        public DbSet<PuntoEmision> PuntoEmision { get; set; }
 
 
         //Contabilidad
@@ -53,7 +59,8 @@ namespace BackEnd.Services.Data
         public DbSet<ConfigRecibo> ConfigRecibo { get; set; }
         //Core
         public DbSet<Transaccion> Transaccion { get; set; }
-
+        //Mail
+        public DbSet<MailServer> MailServer { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var lf = new LoggerFactory();
@@ -104,6 +111,15 @@ namespace BackEnd.Services.Data
                 .HasKey(e => new { e.Id, e.IdComprobante });
             modelBuilder.Entity<ConfigFactura>().HasMany<ItemNumerador>(m => m.Numeradores).WithOne(C => C.ConfigFactura).OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<ItemPuntoEmision>()
+                .HasKey(e => new { e.Id, e.IdPuntoEmision });
+            modelBuilder.Entity<ConfigFactura>().HasMany<ItemPuntoEmision>(m => m.PuntosEmision).WithOne(C => C.ConfigFactura).OnDelete(DeleteBehavior.Cascade);
+            //Comun
+            //NumeradoresPuntoVenta  Composite Key
+            modelBuilder.Entity<NumeradorPuntoEmision>()
+                .HasKey(e => new { e.Id});
+            modelBuilder.Entity<PuntoEmision>().HasMany<NumeradorPuntoEmision>(m => m.Numeradores).WithOne(C => C.PuntoEmision).OnDelete(DeleteBehavior.Cascade);
+
             //Contable
             modelBuilder.Entity<DetalleMayor>()
                .HasKey(e => new { e.Id, e.Item });
@@ -146,8 +162,10 @@ namespace BackEnd.Services.Data
               new TipoRol { Id = "7", Nombre = "CORREDOR" },
               new TipoRol { Id = "8", Nombre = "ENTREGADOR" },
               new TipoRol { Id = "9", Nombre = "INTERMEDIARIO" });
+            //Servicios Afip
 
-            //Numerador Dodumentos
+
+            //Numerador Documentos
             modelBuilder.Entity<NumeradorDocumento>().HasData(
               new NumeradorDocumento { Id = "00001", Nombre = "FACTURA A", PuntoEmision = 1, Numero = 0 });
             modelBuilder.Entity<NumeradorDocumento>().HasData(

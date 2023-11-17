@@ -10,6 +10,7 @@ namespace BackEnd.Services.Models.Comun
     {        
         [Key, Required, MaxLength(10)]
         public string Id { get; set; }
+        public int IdComprobante { get; set; }
         [Required, MaxLength(60)]
         public string Nombre { get; set; }
         public int PuntoEmision { get; set; }

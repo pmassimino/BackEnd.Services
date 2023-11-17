@@ -17,6 +17,53 @@ namespace BackEnd.Services.Migrations.GestionDB
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.7");
 
+            modelBuilder.Entity("BackEnd.Services.Models.Afip.AfipWs", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NombreServicio")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AfipWs");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Afip.CertificadoDigital", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("ExpirationTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Path")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CertificadoDigital");
+                });
+
             modelBuilder.Entity("BackEnd.Services.Models.Almacen.Articulo", b =>
                 {
                     b.Property<string>("Id")
@@ -246,6 +293,9 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("IdComprobante")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -265,6 +315,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00001",
+                            IdComprobante = 0,
                             Nombre = "FACTURA A",
                             Numero = 0,
                             PuntoEmision = 1
@@ -272,6 +323,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00002",
+                            IdComprobante = 0,
                             Nombre = "NOTA CREDITO A",
                             Numero = 0,
                             PuntoEmision = 1
@@ -279,6 +331,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00003",
+                            IdComprobante = 0,
                             Nombre = "NOTA DEBITO A",
                             Numero = 0,
                             PuntoEmision = 1
@@ -286,6 +339,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00004",
+                            IdComprobante = 0,
                             Nombre = "FACTURA B",
                             Numero = 0,
                             PuntoEmision = 1
@@ -293,6 +347,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00005",
+                            IdComprobante = 0,
                             Nombre = "NOTA CREDITO B",
                             Numero = 0,
                             PuntoEmision = 1
@@ -300,6 +355,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00006",
+                            IdComprobante = 0,
                             Nombre = "NOTA DEBITO B",
                             Numero = 0,
                             PuntoEmision = 1
@@ -307,6 +363,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00007",
+                            IdComprobante = 0,
                             Nombre = "FACTURA C",
                             Numero = 0,
                             PuntoEmision = 1
@@ -314,6 +371,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00008",
+                            IdComprobante = 0,
                             Nombre = "NOTA CREDITO C",
                             Numero = 0,
                             PuntoEmision = 1
@@ -321,6 +379,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00009",
+                            IdComprobante = 0,
                             Nombre = "NOTA DEBITO C",
                             Numero = 0,
                             PuntoEmision = 1
@@ -328,6 +387,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00010",
+                            IdComprobante = 0,
                             Nombre = "FACTURA M",
                             Numero = 0,
                             PuntoEmision = 1
@@ -335,6 +395,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00011",
+                            IdComprobante = 0,
                             Nombre = "NOTA CREDITO M",
                             Numero = 0,
                             PuntoEmision = 1
@@ -342,6 +403,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00012",
+                            IdComprobante = 0,
                             Nombre = "NOTA DEBITO M",
                             Numero = 0,
                             PuntoEmision = 1
@@ -349,6 +411,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00013",
+                            IdComprobante = 0,
                             Nombre = "FACTURA E",
                             Numero = 0,
                             PuntoEmision = 1
@@ -356,6 +419,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00014",
+                            IdComprobante = 0,
                             Nombre = "NOTA CREDITO E",
                             Numero = 0,
                             PuntoEmision = 1
@@ -363,6 +427,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00015",
+                            IdComprobante = 0,
                             Nombre = "NOTA DEBITO E",
                             Numero = 0,
                             PuntoEmision = 1
@@ -370,6 +435,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00016",
+                            IdComprobante = 0,
                             Nombre = "REMITO",
                             Numero = 0,
                             PuntoEmision = 1
@@ -377,6 +443,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00017",
+                            IdComprobante = 0,
                             Nombre = "PRESUPUESTO",
                             Numero = 0,
                             PuntoEmision = 1
@@ -384,6 +451,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00018",
+                            IdComprobante = 0,
                             Nombre = "PEDIDO",
                             Numero = 0,
                             PuntoEmision = 1
@@ -391,6 +459,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         new
                         {
                             Id = "00019",
+                            IdComprobante = 0,
                             Nombre = "RECIBO",
                             Numero = 0,
                             PuntoEmision = 1
@@ -1319,6 +1388,9 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.Property<long>("Numero")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Obs")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Origen")
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
@@ -1565,6 +1637,53 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.HasKey("Id");
 
                     b.ToTable("Provincia");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Mail.MailServer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("EsSSL")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Password")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Prioridad")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Puerto")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Server")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TipoServer")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Usuario")
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MailServer");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Tesoreria.CarteraValor", b =>
@@ -1929,12 +2048,25 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("SeccionId")
+                    b.Property<string>("IdSeccion")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Reporte")
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReporteFiscal")
+                        .HasMaxLength(60)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SeccionId");
+                    b.HasIndex("IdSeccion");
 
                     b.ToTable("ConfigFactura");
 
@@ -2314,6 +2446,25 @@ namespace BackEnd.Services.Migrations.GestionDB
                         });
                 });
 
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.ItemPuntoEmision", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("IdPuntoEmision")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id", "IdPuntoEmision");
+
+                    b.HasIndex("IdPuntoEmision");
+
+                    b.ToTable("ItemPuntoEmision");
+                });
+
             modelBuilder.Entity("BackEnd.Services.Models.Ventas.MedioPago", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2406,6 +2557,67 @@ namespace BackEnd.Services.Migrations.GestionDB
                             CtaIvaRedDefault = "2132",
                             Nombre = "GENERAL"
                         });
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.NumeradorPuntoEmision", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
+
+                    b.Property<string>("IdNumeradorDocumento")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdNumeradorDocumento");
+
+                    b.ToTable("NumeradorPuntoEmision");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.PuntoEmision", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Altura")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CodigoPostal")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Domicilio")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdAfipWsService")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdProvincia")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Localidad")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Numero")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PuntoEmision");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Almacen.Articulo", b =>
@@ -2676,7 +2888,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                 {
                     b.HasOne("BackEnd.Services.Models.Comun.Seccion", "Seccion")
                         .WithMany()
-                        .HasForeignKey("SeccionId");
+                        .HasForeignKey("IdSeccion");
 
                     b.Navigation("Seccion");
                 });
@@ -2745,6 +2957,25 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.Navigation("NumeradorDocumento");
                 });
 
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.ItemPuntoEmision", b =>
+                {
+                    b.HasOne("BackEnd.Services.Models.Ventas.ConfigFactura", "ConfigFactura")
+                        .WithMany("PuntosEmision")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackEnd.Services.Models.Ventas.PuntoEmision", "PuntoEmision")
+                        .WithMany()
+                        .HasForeignKey("IdPuntoEmision")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ConfigFactura");
+
+                    b.Navigation("PuntoEmision");
+                });
+
             modelBuilder.Entity("BackEnd.Services.Models.Ventas.MedioPago", b =>
                 {
                     b.HasOne("BackEnd.Services.Models.Ventas.Factura", "Factura")
@@ -2753,6 +2984,23 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Factura");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.NumeradorPuntoEmision", b =>
+                {
+                    b.HasOne("BackEnd.Services.Models.Ventas.PuntoEmision", "PuntoEmision")
+                        .WithMany("Numeradores")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackEnd.Services.Models.Comun.NumeradorDocumento", "NumeradorDocumento")
+                        .WithMany()
+                        .HasForeignKey("IdNumeradorDocumento");
+
+                    b.Navigation("NumeradorDocumento");
+
+                    b.Navigation("PuntoEmision");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Comun.Sujeto", b =>
@@ -2795,6 +3043,8 @@ namespace BackEnd.Services.Migrations.GestionDB
             modelBuilder.Entity("BackEnd.Services.Models.Ventas.ConfigFactura", b =>
                 {
                     b.Navigation("Numeradores");
+
+                    b.Navigation("PuntosEmision");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Ventas.Factura", b =>
@@ -2808,6 +3058,11 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.Navigation("MedioPago");
 
                     b.Navigation("Tributos");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Ventas.PuntoEmision", b =>
+                {
+                    b.Navigation("Numeradores");
                 });
 #pragma warning restore 612, 618
         }

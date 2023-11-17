@@ -40,6 +40,7 @@ namespace BackEnd.Services.Models.Contable
 
         [MaxLength(20)]       
         public string Origen { get; set; }
+        public string Obs { get; set; }
         public virtual IList<DetalleMayor> Detalle { get; set; }
         public DetalleMayor AddDetalle(string IdCuentaMayor, string Concepto, string IdTipo, decimal Importe, DateTime FechaVenc, string IdCuenta = null)
         {
@@ -55,6 +56,7 @@ namespace BackEnd.Services.Models.Contable
             this.Detalle.Add(item);
             return item;
         }
+
 
     }
     public class DetalleMayor

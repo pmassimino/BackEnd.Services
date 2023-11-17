@@ -2,6 +2,7 @@
 using BackEnd.Services.Data;
 using BackEnd.Services.Models.Comun;
 using BackEnd.Services.Models.Contable;
+using BackEnd.Services.Models.Tesoreria;
 using BackEnd.Services.Models.Ventas;
 using BackEnd.Services.Services.Almacen;
 using BackEnd.Services.Services.Comun;
@@ -27,14 +28,18 @@ namespace BackEnd.Services.Services.Venta
         private IGlobalService globalService { get; set; }
         private  ICoreServices coreService { get; set; }
         private INumeradorDocumentoService numeradorDocumentoService { get; set; }
-        
-        public ConfigFacturaService(UnitOfWorkGestionDb UnitOfWork,IModeloAsientoFacturaService modeloAsientoFactura,
-            IGlobalService globalService, INumeradorDocumentoService numeradorDocumentoService,ICoreServices coreService) : base(UnitOfWork)
+
+        private RepositoryBase<Factura, Guid> facturaRepository;
+
+        public ConfigFacturaService(UnitOfWorkGestionDb UnitOfWork, IModeloAsientoFacturaService modeloAsientoFactura,
+            IGlobalService globalService, INumeradorDocumentoService numeradorDocumentoService,
+            ICoreServices coreService) : base(UnitOfWork)
         {
             this.globalService = globalService;
             this.modeloAsientoFactura = modeloAsientoFactura;
             this.numeradorDocumentoService = numeradorDocumentoService;
             this.coreService = coreService;
+            this.facturaRepository = new RepositoryBase<Factura, Guid>(UnitOfWork);
         }
         public override IEnumerable<ConfigFactura> GetAll()
         {
@@ -58,6 +63,16 @@ namespace BackEnd.Services.Services.Venta
             if (tmpResult != null) 
             {
                 result = numeradorDocumentoService.GetOne(tmpResult.Id);
+            }
+            return result;
+        }
+        public override ValidationResults ValidateDelete(ConfigFactura entity)
+        {
+            var result =  base.ValidateDelete(entity);
+            var existeFactura = facturaRepository.GetAll().Where(w=>w.IdSeccion == entity.Id).Count() >0;
+            if (existeFactura) 
+            {
+                result.AddResult(new ValidationResult("Hay facturas relacionadas con esta seccion, no se puede borrar", this, "IdSeccion", "IdSeccion", null));
             }
             return result;
         }

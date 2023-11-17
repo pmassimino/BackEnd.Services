@@ -17,8 +17,20 @@ namespace BackEnd.Services.Models.Ventas
 
         [Key, Required, MaxLength(10)]
         public String Id { get; set; }
+        
+        [MaxLength(60)]
+        public string Nombre { get; set; }
+        [MaxLength(10), ForeignKey("Seccion")]
+        public String IdSeccion { get; set; }
+        [MaxLength(60)]
+        public string Reporte { get; set; }
+        [MaxLength(60)]
+        public string ReporteFiscal { get; set; }   
+
         public virtual IList<ItemNumerador> Numeradores { get; set; }
+        public virtual IList<ItemPuntoEmision> PuntosEmision { get; set; }
         public virtual Seccion Seccion { get; set; }
+       
     }
     public class ItemNumerador 
     {
@@ -34,5 +46,17 @@ namespace BackEnd.Services.Models.Ventas
         public virtual ConfigFactura ConfigFactura { get; set; }
 
     }
-    
+    public class ItemPuntoEmision
+    {
+        //Estructura
+        [Key, Column(Order = 0), MaxLength(10), ForeignKey("ConfigFactura")]
+        public string Id { get; set; }
+        [Key, Column(Order = 1)]
+        [MaxLength(10), ForeignKey("PuntoEmision")]
+        public string IdPuntoEmision { get; set; }        
+        public virtual PuntoEmision PuntoEmision { get; set; }
+        public virtual ConfigFactura ConfigFactura { get; set; }
+
+    }
+
 }

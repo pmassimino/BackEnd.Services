@@ -102,11 +102,13 @@ namespace BackEnd.Api.Controllers.Contable
                 .SelectMany(m => m.Detalle)
                 .Where(w => w.Mayor.Fecha < fecha && w.IdCuentaMayor==IdCuentaMayor)
                 .Sum(s => s.IdTipo == "1" ? s.Importe : -s.Importe);
-            
+            decimal saldoPeriodo = 0;
             foreach (var item in result) 
             {
                 saldo += item.Debe - item.Haber;
+                saldoPeriodo += item.Debe - item.Haber;
                 item.Saldo = saldo;
+                item.SaldoPeriodo = saldoPeriodo;
             }    
                                
 
@@ -153,6 +155,7 @@ namespace BackEnd.Api.Controllers.Contable
             public long Numero { get; set; }
             public decimal Debe { get; set; }
             public decimal Haber { get; set; }
+            public decimal SaldoPeriodo { get; set; }
             public decimal Saldo { get; set; }            
 
         }

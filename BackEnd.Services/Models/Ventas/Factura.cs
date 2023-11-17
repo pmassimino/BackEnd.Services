@@ -175,6 +175,7 @@ namespace BackEnd.Services.Models.Ventas
 
         [Key, Column(Order = 1)]
         public int Item { get; set; }
+       
         public Guid IdFactura { get; set; }
         public Factura Factura { get; set; }        
     }

@@ -23,10 +23,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Soltec.Suscripcion.Code;
+using IAfipWsService = BackEnd.Services.Services.Comun.IAfipWsService;
 
 namespace BackEnd.Api
 {
@@ -89,11 +90,15 @@ namespace BackEnd.Api
             services.AddTransient<INumeradorDocumentoService, NumeradorDocumentoService>();
             services.AddTransient<ISettingService, SettingService>();
             services.AddTransient<ITransaccionService, TransaccionService>();
+            //Afip
+            services.AddTransient<IAfipWsService, AfipWsService>();
+            services.AddTransient<ICertificadoDigitalService, CertificadoDigitalService>();
 
             //Ventas
             services.AddTransient<IModeloAsientoFacturaService, ModeloAsientoFacturaService>();
             services.AddTransient<IFacturaService, FacturaService>();
             services.AddTransient<IConfigFacturaService, ConfigFacturaService>();
+            services.AddTransient<IPuntoEmisionService, PuntoEmisionService>();
 
             //Core
             services.AddTransient<ICoreServices, CoreServices>();
@@ -108,7 +113,8 @@ namespace BackEnd.Api
             services.AddTransient<ILibroIvaService, LibroIvaService>();
             services.AddTransient<IContableService, ContableService>();
 
-
+            //mail
+            services.AddTransient<IMailServerService, MailServerService>();
 
 
             //Tesoreria
@@ -117,8 +123,6 @@ namespace BackEnd.Api
             services.AddTransient<ICarteraValorService, CarteraValorService>();
             //Afip Services
             services.AddTransient<IAFIPHelperService, AFIPHelperService>();
-
-
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

@@ -105,6 +105,10 @@ namespace BackEnd.Api.Controllers.Ventas
                 return BadRequest("Permiso Denegado");
             }
             var entity = this._service.GetOne(id);
+            if (entity == null)
+            {
+                return BadRequest("Comprobante no existe");
+            }
             var Empresa = empresaService.GetOne(sessionService.IdEmpresa);
             string pdfTemplate = "";
             var path = _hostingEnvironment.ContentRootPath;
@@ -307,6 +311,14 @@ namespace BackEnd.Api.Controllers.Ventas
             ws.Empresa = empresa;
 
             var tmpFactura = this._service.GetOne(id);
+            if (tmpFactura==null)
+            {
+                return BadRequest("Comprobante no existe");
+            }
+            if (tmpFactura.Cae != 0) 
+            {
+                return BadRequest("Comprobante ya autorizado");
+            }
             var factura = new FacturaWebService_V1.Factura();
             //Numero y tipo
             factura.Punto_Emision = tmpFactura.Pe;
@@ -351,6 +363,20 @@ namespace BackEnd.Api.Controllers.Ventas
             foreach (var item in tmpFactura.Tributos)
             {
                 factura.AddTributo(item.Nombre, Convert.ToDouble(item.BaseImponible), Convert.ToDouble(item.Tarifa), Convert.ToInt32(item.IdTributo), Convert.ToDouble(item.Importe));
+            }
+            //Nota de credito
+            if (tmpFactura.Tipo == "2" || tmpFactura.Tipo == "3" )
+            {
+                foreach (var item in tmpFactura.ComprobanteAsociado) 
+                {
+                    var tmpCompAsociado = this.service.GetOne(item.IdFactura);
+                    if (tmpCompAsociado != null) 
+                    {
+                        int tipoca = this.afipHelperService.GetIdComprobanteAfip(tmpFactura.Letra, tmpFactura.Tipo);
+                        int numeroca = (int)tmpCompAsociado.Numero;
+                        factura.AddCompAsoc(tipoca, tmpCompAsociado.Pe, numeroca, tmpCompAsociado.FechaComp,"");
+                    }
+                }
             }
             var result = ws.Autorizar(factura);
 

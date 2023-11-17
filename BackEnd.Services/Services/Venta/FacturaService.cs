@@ -94,7 +94,14 @@ namespace BackEnd.Services.Services.Venta
         }
         public override IEnumerable<Factura> GetAll()
         {
-            var result = this._Repository.GetAll().Include(i => i.Detalle).Include(i => i.MedioPago).Include(i=>i.Sujeto).Include(i=>i.Iva).Include(i=>i.Tributos).OrderBy(o=>o.Fecha);
+            var result = this._Repository.GetAll()
+                        .Include(i => i.Detalle)
+                        .Include(i => i.MedioPago)
+                        .Include(i=>i.Sujeto)
+                        .Include(i=>i.Iva)
+                        .Include(i=>i.Tributos)
+                        .Include(i=>i.ComprobanteAsociado)
+                        .OrderBy(o=>o.Fecha);
             return result;
         }
         public override Factura GetByTransaction(Guid id)
@@ -219,6 +226,23 @@ namespace BackEnd.Services.Services.Venta
                     this.UnitOfWork.Context.Entry(dbItem).CurrentValues.SetValues(item);
                 else
                     entityDB.Tributos.Add(item);
+            }
+            // Actualizar Compronante Asociado
+            List<ComprobanteAsociado> itemDeleteCA = new List<ComprobanteAsociado>();
+            foreach (var item in entityDB.ComprobanteAsociado)
+                if (!entity.ComprobanteAsociado.Any(s => s.Id == item.Id && s.Item == item.Item))
+                    itemDeleteCA.Add(item);
+            foreach (var item in itemDeleteCA)
+            {
+                entityDB.ComprobanteAsociado.Remove(item);
+            }
+            foreach (var item in entity.ComprobanteAsociado)
+            {
+                var dbItem = entityDB.ComprobanteAsociado.SingleOrDefault(s => s.Id == item.Id & s.Item == item.Item);
+                if (dbItem != null)
+                    this.UnitOfWork.Context.Entry(dbItem).CurrentValues.SetValues(item);
+                else
+                    entityDB.ComprobanteAsociado.Add(item);
             }
             //this.FixRelation(entityDB);
         }
@@ -533,6 +557,17 @@ namespace BackEnd.Services.Services.Venta
                     i += 1;
                 }
             }
+            //medio pago
+            if (Entity.ComprobanteAsociado != null)
+            {
+                int i = 0;
+                foreach (var item in Entity.ComprobanteAsociado)
+                {
+                    item.Id = Entity.Id;
+                    item.Item = i;
+                    i += 1;
+                }
+            }
             return true;
 
         }
@@ -546,6 +581,11 @@ namespace BackEnd.Services.Services.Venta
                 entity.CotizacionMoneda = 1;
             }
             return entity;
+        }
+        public override Factura UpdateDefaultValues(Factura entity)
+        {
+            entity.Fecha = entity.FechaComp;
+            return base.UpdateDefaultValues(entity);
         }
         public NumeradorDocumento NextNumber(string id,string letra,string tipo)
         {
