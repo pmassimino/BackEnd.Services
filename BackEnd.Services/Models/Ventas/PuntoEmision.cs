@@ -40,7 +40,7 @@ namespace BackEnd.Services.Models.Ventas
         [Key, Column(Order = 0), MaxLength(10), ForeignKey("PuntoEmision")]
         public string Id { get; set; }
        
-        [MaxLength(10), Column(Order = 1), ForeignKey("NumeradorDocumento")]
+        [Key,MaxLength(10), Column(Order = 1), ForeignKey("NumeradorDocumento")]
         public String IdNumeradorDocumento { get; set; }
 
         public virtual NumeradorDocumento NumeradorDocumento { get; set; }

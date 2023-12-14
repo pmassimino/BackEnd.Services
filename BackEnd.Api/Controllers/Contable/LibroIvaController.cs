@@ -29,7 +29,9 @@ namespace BackEnd.Api.Controllers.Contable
         IEmpresaService empresaService { get; set; }
         private IWebHostEnvironment hostingEnvironment { get; set; }
         ISujetoService sujetoService { get; set; }
-        public LibroIvaController(ILibroIvaService service, ISessionService sessionService, IEmpresaService empresaService,IAuthService authService, ISujetoService sujetoService, IWebHostEnvironment hostingEnvironment) : base(service,authService)
+        public LibroIvaController(ILibroIvaService service, ISessionService sessionService, 
+            IEmpresaService empresaService,IAuthService authService,
+            ISujetoService sujetoService, IWebHostEnvironment hostingEnvironment) : base(service,authService)
         {
             this.service= service;
             this.sessionService = sessionService;

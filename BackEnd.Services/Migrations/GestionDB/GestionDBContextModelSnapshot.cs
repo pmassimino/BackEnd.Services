@@ -2571,7 +2571,7 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .HasColumnType("TEXT")
                         .HasColumnOrder(1);
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "IdNumeradorDocumento");
 
                     b.HasIndex("IdNumeradorDocumento");
 
@@ -2996,7 +2996,9 @@ namespace BackEnd.Services.Migrations.GestionDB
 
                     b.HasOne("BackEnd.Services.Models.Comun.NumeradorDocumento", "NumeradorDocumento")
                         .WithMany()
-                        .HasForeignKey("IdNumeradorDocumento");
+                        .HasForeignKey("IdNumeradorDocumento")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("NumeradorDocumento");
 

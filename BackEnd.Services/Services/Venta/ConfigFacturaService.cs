@@ -43,7 +43,11 @@ namespace BackEnd.Services.Services.Venta
         }
         public override IEnumerable<ConfigFactura> GetAll()
         {
-            return this._Repository.GetAll().Include(i => i.Numeradores).ThenInclude(ti=>ti.NumeradorDocumento);
+            return this._Repository.GetAll().Include(i => i.Numeradores).
+                ThenInclude(ti => ti.NumeradorDocumento).
+                Include(i => i.PuntosEmision);
+
+
         }
         public override ConfigFactura GetOne(string id)
         {
@@ -75,6 +79,41 @@ namespace BackEnd.Services.Services.Venta
                 result.AddResult(new ValidationResult("Hay facturas relacionadas con esta seccion, no se puede borrar", this, "IdSeccion", "IdSeccion", null));
             }
             return result;
+        }
+        public override ConfigFactura Update(string id, ConfigFactura entity)
+        {
+            //Fix Relation 
+            this.FixRelation(entity);
+            //set default values
+            entity = this.UpdateDefaultValues(entity);
+            //Actualizar Related
+            this.UpdateModelChild(id, entity);
+            //Fix Relation            
+            this.UnitOfWork.Commit();
+            return entity;
+        }
+        private void UpdateModelChild(String id, ConfigFactura entity)
+        {
+            var entityDB = this.GetOne(id);
+            this.UnitOfWork.Context.Entry(entityDB).CurrentValues.SetValues(entity);
+            // Actualizar Punto Emision
+            List<ItemPuntoEmision> itemDeletePE = new List<ItemPuntoEmision>();
+            foreach (var item in entityDB.PuntosEmision)
+                if (!entity.PuntosEmision.Any(s => s.Id == item.Id && s.IdPuntoEmision == item.IdPuntoEmision))
+                    itemDeletePE.Add(item);
+            foreach (var item in itemDeletePE)
+            {
+                entityDB.PuntosEmision.Remove(item);
+            }
+            foreach (var item in entity.PuntosEmision)
+            {
+                var dbItem = entityDB.PuntosEmision.SingleOrDefault(s => s.Id == item.Id & s.IdPuntoEmision == item.IdPuntoEmision);
+                if (dbItem != null)
+                    this.UnitOfWork.Context.Entry(dbItem).CurrentValues.SetValues(item);
+                else
+                    entityDB.PuntosEmision.Add(item);
+            }
+
         }
     }
 

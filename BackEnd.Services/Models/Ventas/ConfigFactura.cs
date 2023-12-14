@@ -13,6 +13,7 @@ namespace BackEnd.Services.Models.Ventas
         public ConfigFactura()
         {
             this.Numeradores = new List<ItemNumerador>();
+            this.PuntosEmision = new List<ItemPuntoEmision>();
         }
 
         [Key, Required, MaxLength(10)]

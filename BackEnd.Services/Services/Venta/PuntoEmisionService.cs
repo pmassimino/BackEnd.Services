@@ -30,6 +30,10 @@ namespace BackEnd.Services.Services.Venta
                         .OrderBy(o => o.Id);
             return result;
         }
+        public override PuntoEmision GetOne(string id)
+        {
+            return this.GetAll().Where(w=>w.Id==id).FirstOrDefault(); 
+        }
         public override PuntoEmision Update(string id, PuntoEmision entity)
         {   
             //Fix Relation 

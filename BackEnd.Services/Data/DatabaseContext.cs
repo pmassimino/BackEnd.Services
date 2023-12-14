@@ -117,7 +117,7 @@ namespace BackEnd.Services.Data
             //Comun
             //NumeradoresPuntoVenta  Composite Key
             modelBuilder.Entity<NumeradorPuntoEmision>()
-                .HasKey(e => new { e.Id});
+                .HasKey(e => new { e.Id,e.IdNumeradorDocumento});
             modelBuilder.Entity<PuntoEmision>().HasMany<NumeradorPuntoEmision>(m => m.Numeradores).WithOne(C => C.PuntoEmision).OnDelete(DeleteBehavior.Cascade);
 
             //Contable
