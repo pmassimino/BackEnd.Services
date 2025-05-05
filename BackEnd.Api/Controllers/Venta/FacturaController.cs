@@ -385,6 +385,8 @@ namespace BackEnd.Api.Controllers.Ventas
                 //Actualizar CAE  y estado
                 long cae = Convert.ToInt64(result.Factura.cae);
                 this.service.UpdateAfip(tmpFactura.Id, cae, result.Factura.Punto_Emision, result.Factura.Numero);
+                //Actualizar Numerador
+                //this.NextNumber
                 return Ok(result);
             }
             else

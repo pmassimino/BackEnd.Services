@@ -161,12 +161,20 @@ namespace BackEnd.Api.Core
             }
             catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Security", $"{ex.Message}" }
+                    };
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
-            }            
+                var result = new List<string[]>
+                    {
+                    new[] { "Error General", $"{ex.Message}{ex.InnerException?.Message}" }
+                    };
+                return BadRequest(result);
+            }
         }
         [HttpGet("ByTransaccion/{id}")]
         public virtual IActionResult FindByTransaccion(Guid id)
@@ -187,11 +195,19 @@ namespace BackEnd.Api.Core
             }
             catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Security", $"{ex.Message}" }
+                    };
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Error General", $"{ex.Message}{ex.InnerException?.Message}" }
+                    };
+                return BadRequest(result);
             }
         }
 
@@ -206,10 +222,14 @@ namespace BackEnd.Api.Core
         {
             if (!string.IsNullOrEmpty(this.NombreRecurso))
             {
-                string permiso = this.NombreRecurso + ".GetAll";
+                string permiso = this.NombreRecurso + ".Add";
                 if (!this.authService.Authorize(permiso))
                 {
-                    return BadRequest("Permiso Denegado");
+                    var result = new List<string[]>
+                    {
+                    new[] { "Seguridad", "Permiso Denegado" }
+                    };
+                    return BadRequest(result);
                 }
             }
             try
@@ -222,19 +242,28 @@ namespace BackEnd.Api.Core
             }
             catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Security", $"{ex.Message}" }
+                    };
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Error General", $"{ex.Message}{ex.InnerException?.Message}" }
+                    };
+                return BadRequest(result);
             }
 
-           
+
         }
 
         [HttpPut("{id}")]
         public virtual IActionResult Update(Tid id, TEntity entity)
         {
+            
             if (!string.IsNullOrEmpty(this.NombreRecurso))
             {
                 string permiso = this.NombreRecurso + ".GetAll";
@@ -253,13 +282,21 @@ namespace BackEnd.Api.Core
             }
             catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Security", $"{ex.Message}" }
+                    };
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Error General", $"{ex.Message}{ex.InnerException?.Message}" }
+                    };
+                return BadRequest(result);
             }
-            
+
         }
 
         [HttpDelete("{id}")]
@@ -284,13 +321,21 @@ namespace BackEnd.Api.Core
             }
             catch (UnauthorizedAccessException ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Security", $"{ex.Message}" }
+                    };
+                return BadRequest(result);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                var result = new List<string[]>
+                    {
+                    new[] { "Error General", $"{ex.Message}{ex.InnerException?.Message}" }
+                    };
+                return BadRequest(result);
             }
-            
+
         }
         private string errorToString(ValidationResults error)
         {
@@ -315,21 +360,12 @@ namespace BackEnd.Api.Core
             return result;
         }
               
-        private Dictionary<string, string> errorToValidationError(ValidationResults error)
-        {            
-            Dictionary<string, string> result = new Dictionary<string, string>();            
+        private List<string[]> errorToValidationError(ValidationResults error)
+        {
+            List<string[]> result = new List<string[]>();
             foreach (var item in error)
-            {                
-                string key = item.Key;
-                string message = item.Message;
-                if (result.ContainsKey(key))
-                {
-                    result[key] = result[key] + ";" + message;
-                }
-                else 
-                {
-                    result.Add(item.Key, item.Message);
-                }
+            {
+                result.Add(new string[] { item.Key, item.Message });
             }
             return result;
         }

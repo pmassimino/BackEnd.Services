@@ -1,5 +1,6 @@
 ﻿using BackEnd.Services.Data;
 using BackEnd.Services.Models.Afip;
+using BackEnd.Services.Models.Almacen;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,17 @@ namespace Soltec.Suscripcion.Code
         {
             // context.Database.EnsureCreated();
             //Plan
+            if (context.Deposito.Any())
+            {
+                List<Deposito> list = new List<Deposito>();
+                Deposito item = new Deposito()
+                {
+                    Id = "001",
+                    Nombre = "Deposito General"
+                };
+                context.Deposito.AddRange(list);
+                context.SaveChanges();
+            }
             if (!context.AfipWs.Any())
             {
                 List<AfipWs> list = new List<AfipWs>();
@@ -58,5 +70,7 @@ namespace Soltec.Suscripcion.Code
                 context.SaveChanges();
             }   
             }
+           
+
         }
     }

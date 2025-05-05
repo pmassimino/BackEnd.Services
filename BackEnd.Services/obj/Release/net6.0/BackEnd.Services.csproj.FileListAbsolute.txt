@@ -1,0 +1,14 @@
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Release\net6.0\BackEnd.Services.deps.json
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Release\net6.0\BackEnd.Services.runtimeconfig.json
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Release\net6.0\BackEnd.Services.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Services\bin\Release\net6.0\BackEnd.Services.pdb
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.csproj.AssemblyReference.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.AssemblyInfoInputs.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.AssemblyInfo.cs
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.csproj.CoreCompileInputs.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\refint\BackEnd.Services.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.pdb
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\BackEnd.Services.genruntimeconfig.cache
+C:\Proyectos\BackEnd.Services\BackEnd.Services\obj\Release\net6.0\ref\BackEnd.Services.dll

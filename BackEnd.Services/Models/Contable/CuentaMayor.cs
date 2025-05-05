@@ -1,4 +1,5 @@
 ﻿using BackEnd.Services.Data;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -21,7 +22,7 @@ namespace BackEnd.Services.Models.Contable
         public string IdUso { get; set; }
         public virtual TipoCuentaMayor TipoCuentaMayor { get; set; }
         public virtual UsoCuentaMayor UsoCuentaMayor { get; set; }
-        //public virtual CuentaMayor Superior { get; set; }
+        //public virtual CuentaMayor Superior { get; set; }        
 
     }
     //1-General ; 2 - Cuenta Corriente ; 3 - Caja ; 4 - Banco ; 5 - Cartera de Valores  - Libro Iva 
@@ -39,5 +40,10 @@ namespace BackEnd.Services.Models.Contable
         public string Id { get; set; }
         [MaxLength(100)]
         public string Nombre { get; set; }
+    }
+    public class CuentaMayorView:CuentaMayor
+    {
+        [JsonProperty(Order = int.MaxValue)]
+        public IEnumerable<CuentaMayorView> Cuentas { get; set; }
     }
 }

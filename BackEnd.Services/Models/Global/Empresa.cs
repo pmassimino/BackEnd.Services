@@ -13,7 +13,7 @@ namespace BackEnd.Services.Models.Global
         {
             this.Accounts = new List<EmpresaAccount>();
         }
-        [Key, Required, MaxLength(10)]
+        [Key, Required]
         public Guid Id { get; set; }
         public string Nombre { get; set; }
         [MaxLength(100)]

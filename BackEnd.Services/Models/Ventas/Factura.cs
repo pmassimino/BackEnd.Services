@@ -28,6 +28,7 @@ namespace BackEnd.Services.Models.Ventas
         public string Tipo { get; set; }
         [Required, MaxLength(1)]
         public string Letra { get; set; }
+        public string IdPuntoEmision { get; set; }
         public int Pe { get; set; }
         public long Numero { get; set; }
         [Required]

@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,11 +46,23 @@ namespace BackEnd.Api
         {
             
             services.AddControllers();
-            services.AddCors();
-            services.AddCors(o => o.AddPolicy("CorePolicy", builder =>
+            var corsSettings = this.Configuration.GetSection("Cors");
+            var allowedOrigins = corsSettings.GetSection("AllowedOrigins").Get<string[]>();
+
+            services.AddCors(options =>
             {
-                builder.AllowAnyMethod();builder.AllowAnyOrigin();builder.AllowAnyHeader();
-            }));
+                options.AddPolicy("AppPolicy",
+                    policy => policy.WithOrigins(allowedOrigins)
+                                   .AllowAnyHeader()
+                                   .AllowAnyMethod());
+            });
+            // Configura la compresión para el tipo de contenido "application/json"
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
+                options.Providers.Add<GzipCompressionProvider>();
+            });
             var databaseCn = Configuration.GetConnectionString("DatabaseCN");
             var globalCn = Configuration.GetConnectionString("GlobalCN");
             //services.AddDbContext<GestionDBContext>(c => c.UseSqlServer(databaseCn));
@@ -65,10 +78,16 @@ namespace BackEnd.Api
             services.AddTransient<IContextFactory, ContextFactory>();
             services.AddTransient<UnitOfWorkGestionDb>();
             services.AddTransient<IAuthService, AuthService>();
+            //Almacen
             services.AddTransient<IArticuloService, ArticuloService>();
             services.AddTransient<IFamiliaService, FamiliaService>();
+            services.AddTransient<IDepositoService, DepositoService>();
+            services.AddTransient<IMarcaService, MarcaService>();
+            services.AddTransient<IStockService, StockService>();
+            services.AddTransient<IMovStockService, MovStockService>();
             //Global
             services.AddTransient<IUnidadMedidaService, UnidadMedidaService>();
+            services.AddTransient<IOrganizacionService, OrganizacionService>();
             services.AddTransient<IEmpresaService, EmpresaService>();
             services.AddTransient<ICondIvaOperacionService, CondIvaOperacionService>();
             services.AddTransient<ITipoDocumentoService, TipoDocumentoService>();
@@ -115,6 +134,7 @@ namespace BackEnd.Api
 
             //mail
             services.AddTransient<IMailServerService, MailServerService>();
+            services.AddTransient<IMailService, MailService>();
 
 
             //Tesoreria
@@ -161,17 +181,11 @@ namespace BackEnd.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseCors("CorePolicy");
+            app.UseCors("AppPolicy");
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
-            //app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-         
-            //app.UseCors(
-            //    options => options.SetIsOriginAllowed(x => _ = true).AllowAnyMethod().AllowAnyHeader().AllowCredentials()
-            //);
-
+            
             app.UseAuthentication();
 
             app.UseAuthorization();

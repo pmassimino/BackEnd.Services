@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "m+DSweUO+7tIGMWiCEJqR78n8bgW6fPf2cZssRfzWRQ=",
+  "Source": "BackEnd.Api",
+  "BasePath": "_content/BackEnd.Api",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

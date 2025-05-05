@@ -36,8 +36,11 @@ namespace BackEnd.Services.Services.Almacen
         public override ValidationResults ValidateDelete(Articulo entity)
         {
             var result =  base.ValidateDelete(entity);
-            var count = this._facturaRepository.GetAll().Where(w => w.Detalle.Where(wd => wd.IdArticulo == entity.Id).Count()>0).Count();
-            if (count > 0) 
+            bool existeDetalle = _facturaRepository
+                                 .GetAll()
+                                 .AsNoTracking() // Opcional: mejora rendimiento si no necesitas modificar los datos
+                                 .Any(factura => factura.Detalle.Any(detalle => detalle.IdArticulo == entity.Id));
+            if (existeDetalle) 
             {
                 result.AddResult(new ValidationResult("Existen dependencias", this, "IdArticulo", "IdArticulo", null));
             }

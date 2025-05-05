@@ -26,7 +26,8 @@ namespace BackEnd.Services.Services.Venta
         public override IEnumerable<PuntoEmision> GetAll()
         {
             var result = this._Repository.GetAll()
-                        .Include(i => i.Numeradores)                        
+                        .Include(i => i.Numeradores) 
+                        .ThenInclude(i=>i.NumeradorDocumento)
                         .OrderBy(o => o.Id);
             return result;
         }

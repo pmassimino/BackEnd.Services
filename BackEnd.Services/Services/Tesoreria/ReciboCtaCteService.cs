@@ -6,6 +6,7 @@ using BackEnd.Services.Models.Tesoreria;
 using BackEnd.Services.Services.Comun;
 using BackEnd.Services.Services.Contable;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace BackEnd.Services.Services.Tesoreria
         IMovCtaCteService movCtaCteService;
         ICarteraValorService carteraValorService;
         IMayorService mayorService;
+        private RepositoryBase<Mayor, Guid> mayorRepository;
         ICuentaMayorService cuentaMayorService;
         public ReciboCtaCteService(UnitOfWorkGestionDb UnitOfWork,
             IContableService contaService,ITransaccionService transaccionService,INumeradorDocumentoService numDocService,
@@ -60,6 +62,7 @@ namespace BackEnd.Services.Services.Tesoreria
             this.mayorService = mayorService;
             this.mayorService.autoSave = false;
             this.mayorService.UnitOfWork = UnitOfWork;
+            this.mayorRepository = new RepositoryBase<Mayor, Guid>(UnitOfWork);
             this.cuentaMayorService = cuentaMayorService;
          
         }
@@ -169,11 +172,11 @@ namespace BackEnd.Services.Services.Tesoreria
                     result.AddResult(new ValidationResult("No Balancea", this, "DetalleValores", "Importe", null));
                 }
             }
-            foreach (var item  in entity.DetalleComprobante) 
+            foreach (var item in entity.DetalleComprobante)
             {
-                if (item.Importe < 0) 
+                if (item.Importe < 0)
                 {
-                    result.AddResult(new ValidationResult("Comprobante N°:" + item.Numero.ToString()  + "no puede ser menor a cero", this, "DetalleComprobante", "DetalleComprobante", null));
+                    result.AddResult(new ValidationResult("Comprobante N°:" + item.Numero.ToString() + "no puede ser menor a cero", this, "DetalleComprobante", "DetalleComprobante", null));
                 }
             }
             foreach (var item in entity.DetalleValores)
@@ -183,8 +186,39 @@ namespace BackEnd.Services.Services.Tesoreria
                     result.AddResult(new ValidationResult("Comprobante N°:" + item.Numero.ToString() + "no puede ser menor a cero", this, "DetalleComprobante", "DetalleComprobante", null));
                 }
             }
-
+            //Validar Cuentas cartera de Valores
+            foreach (var item in entity.DetalleValores)
+            {
+                var tmpCuenta = cuentaMayorService.GetOne(item.IdCuentaMayor);
+                if (tmpCuenta == null)
+                {
+                    result.AddResult(new ValidationResult("Cuenta contable no válida", this, "IdCuentaMayor", "DetalleValores", null));
+                }
+                if (tmpCuenta != null && tmpCuenta.IdUso == "6")
+                {
+                    if (string.IsNullOrEmpty(item.Banco))
+                    {
+                        result.AddResult(new ValidationResult("Nombre de banco requerido para cuenta cartera de valores ", this, "DetalleValores.Banco", "DetalleValores", null));
+                    }
+                    if (string.IsNullOrEmpty(item.Sucursal))
+                    {
+                        result.AddResult(new ValidationResult("Nombre sucursal requerido para cuenta cartera de valores ", this, "DetalleValores.Sucursal", "DetalleValores", null));
+                    }
+                    if (item.Numero == 0)
+                    {
+                        result.AddResult(new ValidationResult("Numero de cheque  requerido para cuenta cartera de valores ", this, "DetalleValores.Numero", "DetalleValores", null));
+                    }
+                }
+            }
+            return result;           
+        }
+        public override ValidationResults ValidateUpdate(ReciboCtaCte entity)
+        {
+            
+            var result =  base.ValidateUpdate(entity);
+            result.AddResult(new ValidationResult("No se puede actualizar un recibo", this, "Id", "Id", null));
             return result;
+
         }
 
         public ValidationResults ValidateDetalleComp(DetalleComprobante item)
@@ -288,7 +322,7 @@ namespace BackEnd.Services.Services.Tesoreria
             newMayor.Origen = "rec";
             if (entity.Importe != 0) //No contabilizar recibos de conciliación
             {
-                this.mayorService.Add(newMayor);
+                this.mayorRepository.Add(newMayor);
             }
             //actualizar relacionRecibo
             //Restar a Cuenta
@@ -463,8 +497,8 @@ namespace BackEnd.Services.Services.Tesoreria
             result.Fecha = entity.Fecha;            
             result.FechaVenc = entity.FechaVencimiento;
             //Predeterminar Recibo Cta Cte
-            string tipCuenta = TipoAsiento.Debe;
-            string tipAcred = TipoAsiento.Haber;
+            string tipCuenta = TipoAsiento.Haber;
+            string tipAcred = TipoAsiento.Debe;
             //Recibo de Pago
             if (entity.IdTipo == "2")
             {

@@ -43,7 +43,7 @@ namespace BackEnd.Services.Services.Almacen
             }
             if (!string.IsNullOrEmpty(entity.CtaEgresoDefault))
             {
-                var tmpCuenta = cuentaMayorService.GetOne(entity.CtaIngresoDefault);
+                var tmpCuenta = cuentaMayorService.GetOne(entity.CtaEgresoDefault);
                 if (tmpCuenta == null)
                 {
                     result.AddResult(new ValidationResult("Cuenta de Egreso no existe", "Familia", "CtaIngresoDefault", "", null));

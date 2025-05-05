@@ -16,6 +16,8 @@ namespace BackEnd.Services.Models.Almacen
         public string Nombre { get; set; }
         [MaxLength(10), ForeignKey("Familia")]
         public string IdFamilia { get; set; }
+        [MaxLength(10), ForeignKey("Marca")]
+        public string IdMarca { get; set; }
         [MaxLength(10)]
         public string IdUnidad { get; set; }
         [MaxLength(10)]
@@ -34,7 +36,10 @@ namespace BackEnd.Services.Models.Almacen
         public decimal StockReposicion { get; set; }
         public decimal StockMaximo { get; set; }
         public string Observacion { get; set; }
+        public bool EsServicio { get; set; }
         public virtual Familia Familia { get; set; }
-        
+        public virtual Marca Marca { get; set; }
+
+
     }
 }

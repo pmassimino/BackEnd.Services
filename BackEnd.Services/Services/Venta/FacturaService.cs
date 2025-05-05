@@ -24,6 +24,7 @@ namespace BackEnd.Services.Services.Venta
         IEnumerable<CuentaMayor> MediosPagos();
         Factura UpdateAfip(Guid id,long cae, int pe, long numero);
         NumeradorDocumento NextNumber(string id, string letra, string tipo);
+        
         int DigitosDecimal { get;set; }
     }
     public class FacturaService : ServiceBase<Factura,Guid>,IFacturaService
@@ -42,13 +43,16 @@ namespace BackEnd.Services.Services.Venta
         private RepositoryBase<ReciboCtaCte, string> reciboCtaCteRepository;
         private IConfigFacturaService configFacturaService;
         private IAFIPHelperService afipHelperService;
+        private IPuntoEmisionService puntoEmisionService;
         private INumeradorDocumentoService numeradorDocumentoService;
+
         private ITransaccionService transaccionService { get; set; }
         public int DigitosDecimal { get; set; } = 2;
-        public FacturaService(UnitOfWorkGestionDb UnitOfWork,IArticuloService articuloService,IFamiliaService familiaService,
+        public FacturaService(UnitOfWorkGestionDb UnitOfWork,IArticuloService articuloService, IFamiliaService familiaService,
             ICuentaMayorService cuentaMayorService, IMovCtaCteService movCtaCteService, IMayorService mayorService, IModeloAsientoFacturaService modeloAsientoFactura,
             IGlobalService globalService, ITransaccionService transaccionService, IReciboCtaCteService reciboCtaCteService, ILibroIvaService libroIvaService, ISujetoService sujetoService
-, IConfigFacturaService configFacturaService,IAFIPHelperService afipHelperService,INumeradorDocumentoService numeradorDocumentoService) : base(UnitOfWork)
+, IConfigFacturaService configFacturaService, IAFIPHelperService afipHelperService, INumeradorDocumentoService numeradorDocumentoService
+, IPuntoEmisionService puntoEmisionService) : base(UnitOfWork)
         {
             this.cuentaMayorService = cuentaMayorService;
             this.articuloService = articuloService;
@@ -65,7 +69,7 @@ namespace BackEnd.Services.Services.Venta
             this.transaccionService.UnitOfWork = UnitOfWork;
             this.libroIvaService.autoSave = false;
             this.libroIvaService.UnitOfWork = UnitOfWork;
-            
+
             this.mayorService.autoSave = false;
             this.mayorService.UnitOfWork = UnitOfWork;
             this.mayorRepository = new RepositoryBase<Mayor, Guid>(UnitOfWork);
@@ -78,8 +82,7 @@ namespace BackEnd.Services.Services.Venta
             this.sujetoService = sujetoService;
             this.configFacturaService = configFacturaService;
             this.afipHelperService = afipHelperService;
-            
-
+            this.puntoEmisionService = puntoEmisionService;
         }
         public override Factura GetOne(Guid id)
         {
@@ -124,7 +127,7 @@ namespace BackEnd.Services.Services.Venta
             Entity.IdTransaccion = tra.Id;
             Entity.Origen = tra.Tipo;
             //Numerador
-            var tmpNumerador = this.NextNumber(Entity.IdSeccion, Entity.Letra, Entity.Tipo);
+            var tmpNumerador = this.NextNumber(Entity.IdPuntoEmision, Entity.Letra, Entity.Tipo);
             Entity.Pe = tmpNumerador.PuntoEmision;
             Entity.Numero = tmpNumerador.Numero;            
             this.numeradorDocumentoService.Increment(tmpNumerador.Id);
@@ -590,8 +593,10 @@ namespace BackEnd.Services.Services.Venta
         public NumeradorDocumento NextNumber(string id,string letra,string tipo)
         {
             int idComprobante = this.afipHelperService.GetIdComprobanteAfip(letra, tipo);
-            var tmpConfig = this.configFacturaService.GetOne(id);
-            var tmpNumerador = tmpConfig.Numeradores.Where(w => w.IdComprobante == idComprobante).FirstOrDefault();
+            //var tmpConfig = this.configFacturaService.GetOne(id);
+            var tmpPuntoEmision = this.puntoEmisionService.GetOne(id);
+            //var tmpNumerador = tmpConfig.Numeradores.Where(w => w.IdComprobante == idComprobante).FirstOrDefault();
+            var tmpNumerador = tmpPuntoEmision.Numeradores.Where(w=>w.NumeradorDocumento.IdComprobante==idComprobante).FirstOrDefault();
             var tmpresult = tmpNumerador.NumeradorDocumento;
             tmpresult.Numero += 1;
             return tmpresult;
@@ -637,7 +642,7 @@ namespace BackEnd.Services.Services.Venta
             string nombre = this.cuentaMayorService.GetOne(ctaIngresoDefault).Nombre;
             //Agrupo  
             var tmpTotalArticulo = (from d in entity.Detalle
-                            group new { Total = d.Gravado + d.NoGravado, d.IdArticulo} by d.IdArticulo into g
+                            group new { Total = d.Gravado + d.NoGravado +d.Exento, d.IdArticulo} by d.IdArticulo into g
                             select new TotalArticuloResult
                             {
                                 IdArticulo = g.Key,

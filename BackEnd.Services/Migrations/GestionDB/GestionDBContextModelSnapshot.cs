@@ -80,11 +80,18 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.Property<decimal>("CostoVenta")
                         .HasColumnType("TEXT");
 
+                    b.Property<bool>("EsServicio")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Estado")
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("IdFamilia")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdMarca")
                         .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
@@ -128,7 +135,25 @@ namespace BackEnd.Services.Migrations.GestionDB
 
                     b.HasIndex("IdFamilia");
 
+                    b.HasIndex("IdMarca");
+
                     b.ToTable("Articulo");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Deposito", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Deposito");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Almacen.Familia", b =>
@@ -156,6 +181,158 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.HasKey("Id");
 
                     b.ToTable("Familia");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Lote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Estado")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaFabricacion")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("FechaVenc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdArticulo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Lote");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Marca", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Marca");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.MovStock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Concepto")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdArticulo")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdDeposito")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdLote")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdSerie")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<Guid>("IdTransaccion")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Numero")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MovStock");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Serie", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Estado")
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdArticulo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Numero")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Serie");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdArticulo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("IdDeposito")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdLote")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("IdSerie")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdArticulo");
+
+                    b.HasIndex("IdDeposito");
+
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Comun.Area", b =>
@@ -1639,6 +1816,73 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.ToTable("Provincia");
                 });
 
+            modelBuilder.Entity("BackEnd.Services.Models.Mail.Attachment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Filename")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("IdMail")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("MimeType")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdMail");
+
+                    b.ToTable("Attachment");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Mail.Mail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Body")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("To")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Mail");
+                });
+
             modelBuilder.Entity("BackEnd.Services.Models.Mail.MailServer", b =>
                 {
                     b.Property<int>("Id")
@@ -2263,6 +2507,9 @@ namespace BackEnd.Services.Migrations.GestionDB
                     b.Property<string>("IdMoneda")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("IdPuntoEmision")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("IdSeccion")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -2626,7 +2873,32 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .WithMany()
                         .HasForeignKey("IdFamilia");
 
+                    b.HasOne("BackEnd.Services.Models.Almacen.Marca", "Marca")
+                        .WithMany()
+                        .HasForeignKey("IdMarca");
+
                     b.Navigation("Familia");
+
+                    b.Navigation("Marca");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Almacen.Stock", b =>
+                {
+                    b.HasOne("BackEnd.Services.Models.Almacen.Articulo", "Articulo")
+                        .WithMany()
+                        .HasForeignKey("IdArticulo")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BackEnd.Services.Models.Almacen.Deposito", "Deposito")
+                        .WithMany()
+                        .HasForeignKey("IdDeposito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Articulo");
+
+                    b.Navigation("Deposito");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Comun.Contacto", b =>
@@ -2778,6 +3050,17 @@ namespace BackEnd.Services.Migrations.GestionDB
                         .HasForeignKey("IdProvincia");
 
                     b.Navigation("Provincia");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Mail.Attachment", b =>
+                {
+                    b.HasOne("BackEnd.Services.Models.Mail.Mail", "Mail")
+                        .WithMany("Attachments")
+                        .HasForeignKey("IdMail")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mail");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Tesoreria.CarteraValor", b =>
@@ -3026,6 +3309,11 @@ namespace BackEnd.Services.Migrations.GestionDB
             modelBuilder.Entity("BackEnd.Services.Models.Contable.Mayor", b =>
                 {
                     b.Navigation("Detalle");
+                });
+
+            modelBuilder.Entity("BackEnd.Services.Models.Mail.Mail", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 
             modelBuilder.Entity("BackEnd.Services.Models.Tesoreria.CarteraValor", b =>

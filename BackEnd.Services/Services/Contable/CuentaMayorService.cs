@@ -5,6 +5,7 @@ using Microsoft.Practices.EnterpriseLibrary.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace BackEnd.Services.Services.Contable
@@ -12,6 +13,7 @@ namespace BackEnd.Services.Services.Contable
     public interface ICuentaMayorService : IService<CuentaMayor, string>
     {
         IEnumerable<CuentaMayor> GetCuentasMedioPago();
+        IEnumerable<CuentaMayorView> GetAllViews();
     }
     public class CuentaMayorService : ServiceBase<CuentaMayor, string>, ICuentaMayorService
     {
@@ -26,6 +28,39 @@ namespace BackEnd.Services.Services.Contable
         public override IEnumerable<CuentaMayor> GetAll()
         {
             var result = base.GetAll().OrderBy(p=>p.Id);
+            return result.ToList();
+        }      
+        public IEnumerable<CuentaMayorView> GetAllViews() 
+        {
+            var tmpresult = base.GetAll().OrderBy(p=>p.Id).Select(c => new CuentaMayorView
+            {
+                Id = c.Id,
+                Nombre = c.Nombre,
+                IdSuperior = c.IdSuperior,
+                IdTipo = c.IdTipo,
+                IdUso = c.IdUso,
+                TipoCuentaMayor = c.TipoCuentaMayor,
+                UsoCuentaMayor = c.UsoCuentaMayor,                
+            }).ToList(); 
+            var result = this.ConstruirJerarquia(tmpresult, null);
+            return result;
+        }
+        private  IEnumerable<CuentaMayorView> ConstruirJerarquia(List<CuentaMayorView> cuentas, string idSuperior)
+        {
+            var result = cuentas
+                .Where(c => c.IdSuperior == idSuperior)
+                .OrderBy(c => c.Id)
+                .Select(c => new CuentaMayorView
+                {
+                    Id = c.Id,
+                    Nombre = c.Nombre,
+                    IdSuperior = c.IdSuperior,
+                    IdTipo = c.IdTipo,
+                    IdUso = c.IdUso,
+                    TipoCuentaMayor = c.TipoCuentaMayor,
+                    UsoCuentaMayor = c.UsoCuentaMayor,
+                    Cuentas = ConstruirJerarquia(cuentas, c.Id).ToList()
+                });
             return result;
         }
 

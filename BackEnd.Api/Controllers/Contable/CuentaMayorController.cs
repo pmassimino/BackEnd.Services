@@ -36,6 +36,11 @@ namespace BackEnd.Api.Controllers.Contable
         {
             return Ok(this._service.GetAll().Where(w=>w.IdUso=="3"));
         }
+        [HttpGet("view")]
+        public IActionResult GetAllView()
+        {
+            return Ok(this._service.GetAllViews());
+        }
         [HttpGet("Imputables")]
         public IActionResult Imputables()
         {

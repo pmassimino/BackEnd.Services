@@ -26,6 +26,13 @@ namespace BackEnd.Services.Data
         //Almacen
         public DbSet<Articulo> Articulo { get; set; }
         public DbSet<Familia> Familia { get; set; }
+        public DbSet<Deposito> Deposito { get; set; }
+        public DbSet<Marca> Marca { get; set; }
+        public DbSet<Lote> Lote { get; set; }
+        public DbSet<Serie> Serie { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+        public DbSet<MovStock> MovStock { get; set; }
+
         //Comun
 
         public DbSet<Sujeto> Sujeto { get; set; }
@@ -287,10 +294,11 @@ namespace BackEnd.Services.Data
               new ConfigRecibo { Id = "001", IdNumeradorDocumento = "00019" });
             modelBuilder.Entity<ModeloAsientoFactura>().HasData(
               new ModeloAsientoFactura { Id = 1, Nombre = "GENERAL", CtaIngresoDefault = "4111", CtaGastoDefault = "5211", CtaCajaDefault = "1111", CtaIvaGenDefault = "2131", CtaIvaRedDefault = "2132", CtaImpuestoDefault = "4112" });
-
             modelBuilder.Entity<MovCarteraValor>().HasKey(e => new { e.Id, e.Item });
             //Factura Delete cascade
             modelBuilder.Entity<CarteraValor>().HasMany<MovCarteraValor>(m => m.MovCarteraValor).WithOne(f => f.CarteraValor).OnDelete(DeleteBehavior.Cascade);
+            //mail
+            modelBuilder.Entity<Mail>().HasMany<Attachment>(m => m.Attachments).WithOne(f => f.Mail).OnDelete(DeleteBehavior.Cascade);
         }
         public class UnitOfWorkDb : IUnitOfWork
         {

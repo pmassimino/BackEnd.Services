@@ -193,6 +193,6 @@ C:\Proyectos\BackEnd.Services\BackEnd.Api\bin\Debug\net6.0\appsettings.json
 C:\Proyectos\BackEnd.Services\BackEnd.Api\bin\Debug\net6.0\BackEnd.Api.deps.json
 C:\Proyectos\BackEnd.Services\BackEnd.Api\bin\Debug\net6.0\BackEnd.Api.runtimeconfig.json
 C:\Proyectos\BackEnd.Services\BackEnd.Api\bin\Debug\net6.0\BackEnd.Api.pdb
-C:\Proyectos\BackEnd.Services\BackEnd.Api\obj\Debug\net6.0\BackEnd.Api.csproj.CopyComplete
 C:\Proyectos\BackEnd.Services\BackEnd.Api\obj\Debug\net6.0\BackEnd.Api.genruntimeconfig.cache
 C:\Proyectos\BackEnd.Services\BackEnd.Api\obj\Debug\net6.0\ref\BackEnd.Api.dll
+C:\Proyectos\BackEnd.Services\BackEnd.Api\obj\Debug\net6.0\BackEnd.Api.csproj.CopyComplete

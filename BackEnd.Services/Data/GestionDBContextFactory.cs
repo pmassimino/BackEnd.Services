@@ -16,7 +16,7 @@ namespace BackEnd.Services.Data
             public GestionDBContext CreateDbContext(string[] args)
             {
                 var optionsBuilder = new DbContextOptionsBuilder<GestionDBContext>();
-                optionsBuilder.UseSqlite("Data Source=HerediaDB.db");
+                optionsBuilder.UseSqlite("Data Source=AltDB.db");
 
                 return new GestionDBContext(optionsBuilder.Options);
             }
